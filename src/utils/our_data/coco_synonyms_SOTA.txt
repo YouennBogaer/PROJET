@@ -1,0 +1,120 @@
+person person
+people person
+man person
+men person
+woman person
+women person
+boy person
+boys person
+girl person
+girls person
+child person
+children person
+kid person
+kids person
+guy person
+lady person
+baby person
+bicycle bicycle
+bike bicycle
+bikes bicycle
+car car
+cars car
+auto car
+taxi car
+bus bus
+busses bus
+motorcycle motorcycle
+motorbike motorcycle
+train train
+tram train
+truck truck
+boat boat
+ship boat
+traffic light traffic light
+stop light traffic light
+fire hydrant fire hydrant
+stop sign stop sign
+bird bird
+birds bird
+cat cat
+cats cat
+kitten cat
+dog dog
+dogs dog
+puppy dog
+horse horse
+horses pony
+sheep sheep
+cow cow
+cows cow
+elephant elephant
+bear bear
+zebra zebra
+giraffe giraffe
+backpack backpack
+umbrella umbrella
+handbag handbag
+tie tie
+suitcase suitcase
+frisbee frisbee
+skis skis
+snowboard snowboard
+sports ball sports ball
+ball sports ball
+kite kite
+baseball bat baseball bat
+baseball glove baseball glove
+skateboard skateboard
+surfboard surfboard
+tennis racket tennis racket
+bottle bottle
+wine glass wine glass
+cup cup
+fork fork
+knife knife
+spoon spoon
+bowl bowl
+banana banana
+apple apple
+sandwich sandwich
+orange orange
+broccoli broccoli
+carrot carrot
+hot dog hot dog
+hotdog hot dog
+pizza pizza
+donut donut
+cake cake
+chair chair
+couch couch
+sofa couch
+potted plant potted plant
+plant potted plant
+bed bed
+dining table dining table
+table dining table
+toilet toilet
+tv tv
+television tv
+laptop laptop
+computer laptop
+mouse mouse
+remote remote
+keyboard keyboard
+cell phone cell phone
+phone cell phone
+microwave microwave
+oven oven
+toaster toaster
+sink sink
+refrigerator refrigerator
+fridge refrigerator
+book book
+clock clock
+vase vase
+scissors scissors
+teddy bear teddy bear
+teddy teddy bear
+hair drier hair drier
+toothbrush toothbrush

@@ -6,3 +6,5 @@
 # Choix de baseline : 
 
 # src/utils/dl.py : télécharger COCO2017 val avec captions (~2GB)
+
+## JAVA 8 : pour les métriques METEOR et SPICE
