@@ -1,3 +1,4 @@
 data
 *.jpg
 venv
+__pycache__

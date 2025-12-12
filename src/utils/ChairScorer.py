@@ -39,7 +39,6 @@ class ChairScorer:
         return mapping
 
     def _load_coco_data(self, instances_path):
-        print(f"Chargement des annotations GT depuis {instances_path}...")
         with open(instances_path, 'r') as f:
             data = json.load(f)
         
