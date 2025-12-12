@@ -1,15 +1,18 @@
 import string
 from pycocoevalcap.bleu.bleu import Bleu
-from pycocoevalcap.meteor.meteor import Meteor
 from pycocoevalcap.cider.cider import Cider
 from pycocoevalcap.spice.spice import Spice
 
 from utils.ChairScorer import ChairScorer
+from utils.MeteorScorer import MeteorScorer
+
+JAVA_PATH = "C:/Users/bogae/Documents/java8/jdk8u472-b08/bin/java.exe"
 
 class Scorer:
-    def __init__(self, path_instances, path_synonyms):
+    def __init__(self, path_instances, path_synonyms, java_path = JAVA_PATH):
         self.path_instances = path_instances
         self.path_synonyms = path_synonyms
+        self.java_path = java_path 
 
     def sanitize_text(self, text):
       text = text.lower()
@@ -56,19 +59,40 @@ class Scorer:
         return eval_result
     
     # TODO Bibliothèque galère à utiliser sur windows à cause des passage en java (à tester avec JAVA 8)
-    def compute_meteor(self,gts,res):
+    def compute_meteor(self, gts, res):
         """
-        METEOR (Metric for Evaluation of Translation with Explicit ORdering)
-        Similaire à BLEU. Aligne les mots en utilisant non seulement la correspondance exacte,
-        mais aussi les synonymes (via WordNet) et les racines des mots (stemming).
-        Permet de mesurer la richesse du vocabulaire.
+        METEOR
+        Corrige la rigidité de BLEU. Prend en compte les correspondances exacts, mais aussi le stemming (racine des mots) et les synonymes.
+        Additionellement il regarde l'order des mots pour évaluer sur le sens de la phrase : "Le chat mange la souris" vs "La souris mange le chat".
+        Charge les synonymes via WordNet ce qu'il fait via Java.
 
         PARAMETERS : 
 
          gts: Dictionnaire {image_id: [liste_de_captions_reference]}
          res: Dictionnaire {image_id: [liste_de_captions_generees]}
         """
-        return None
+        print("Calcul de METEOR...")
+        gts = self.sanitize_dict(gts)
+        res = self.sanitize_dict(res)
+        
+        scorer = None
+        try:
+            # 1. On démarre Java maintenant
+            scorer = MeteorScorer(java_path=self.java_path)
+            
+            # 2. On calcule
+            score, _ = scorer.compute_score(gts, res)
+            return score
+            
+        except Exception as e:
+            print(f"[METEOR FAIL] Erreur : {e}")
+            return 0.0
+            
+        finally:
+            # 3. Quoi qu'il arrive (succès ou erreur), on tue le processus
+            if scorer:
+                scorer.close()
+
     
     def compute_cider(self,gts,res):
         """
@@ -144,6 +168,9 @@ class Scorer:
         bleu_result = self.compute_bleu(gts,res)
         eval_result = eval_result | bleu_result
 
+        # METEOR
+        eval_result["METEOR"] = self.compute_meteor(gts,res)
+
         # SPICE
         avg_spice,_ = self.compute_spice(gts,res)
         eval_result["SPICE"] = avg_spice
@@ -152,4 +179,12 @@ class Scorer:
         eval_result["CHAIR"] = self.compute_chair(res)
 
         return eval_result
+    
+    def close(self):
+        """Nettoyage propre à la fin"""
+        if self.meteor:
+            self.meteor.close()
+            
+    def __del__(self):
+        self.close()
 

@@ -1,7 +1,7 @@
 from pathlib import Path
 import ollama
 
-class Model():
+class Model:
    def __init__(self, prompts, imgs_path, coco_captions):
        self.imgs_path = imgs_path
        self.prompts = prompts
