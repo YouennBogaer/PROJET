@@ -3,9 +3,17 @@ import subprocess
 import threading
 
 class MeteorScorer:
+    """
+    METEOR
+        Corrige la rigidité de BLEU. Prend en compte les correspondances exacts, mais aussi le stemming (racine des mots) et les synonymes.
+        Additionellement il regarde l'ordre des mots pour évaluer sur le sens de la phrase : "Le chat mange la souris" vs "La souris mange le chat".
+        Charge les synonymes via WordNet ce qu'il fait via Java.
+    """
+
     def __init__(self, java_path="java"):
         import pycocoevalcap.meteor.meteor as meteor_script_module
         
+        # On importe le .jar
         base_path = os.path.dirname(os.path.abspath(meteor_script_module.__file__))
         self.meteor_jar = os.path.join(base_path, 'meteor-1.5.jar')
         
@@ -16,7 +24,6 @@ class MeteorScorer:
              else:
                  raise FileNotFoundError(f"Impossible de trouver 'meteor-1.5.jar'.")
 
-        if java_path is None: java_path = "java"
 
         self.meteor_cmd = [
             java_path, '-Duser.language=en', '-Duser.country=US', 
@@ -58,7 +65,7 @@ class MeteorScorer:
                     stat = self._stat(res[i][0], gts[i])
                     eval_line += ' ||| {}'.format(stat)
                 except Exception:
-                    # Si une image plante, on met une stat vide pour ne pas casser le reste
+                    # Stat vide si une image plante
                     eval_line += ' ||| 0.0'
 
             self.process.stdin.write(f"{eval_line}\n".encode('utf-8'))
@@ -72,7 +79,8 @@ class MeteorScorer:
                 try:
                     next_line = self.process.stdout.readline().decode('utf-8').strip()
                     if next_line and " " not in next_line: score_str = next_line
-                except: pass
+                except: 
+                    pass
 
             try:
                 return float(score_str.replace(',', '.')), []

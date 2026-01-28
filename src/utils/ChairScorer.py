@@ -3,6 +3,13 @@ import string
 import os
 
 class ChairScorer:
+    """
+    CHAIR (Caption Hallucination Assessment with Image Relevance)
+        C'est une métrique spécialisée pour détecter les hallucinations. 
+        Elle calcule le pourcentage d'objets mentionnés dans la légende qui ne sont pas présents dans l'image 
+        (basé sur la liste d'objets connus par exemple grace une segmentation).
+    """
+
     def __init__(self, instances_path, synonyms_path):
         """
         Initialise le calculateur CHAIR.

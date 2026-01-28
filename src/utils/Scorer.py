@@ -82,19 +82,17 @@ class Scorer:
         
         scorer = None
         try:
-            # 1. On démarre Java maintenant
+            # demarre java
             scorer = MeteorScorer(java_path=self.java_path)
             
-            # 2. On calcule
             score, _ = scorer.compute_score(gts, res)
             return score
             
         except Exception as e:
-            print(f"[METEOR FAIL] Erreur : {e}")
+            print(f"Erreur METEOR: {e}")
             return 0.0
             
         finally:
-            # 3. Quoi qu'il arrive (succès ou erreur), on tue le processus
             if scorer:
                 scorer.close()
 
