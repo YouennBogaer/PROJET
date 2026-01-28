@@ -1,0 +1,8 @@
+ollama==0.6.1
+Pillow==12.1.0
+pycocoevalcap==1.2
+python-dotenv==1.2.1
+Requests==2.32.5
+streamlit==1.53.1
+tqdm==4.67.1
+ipykernel
