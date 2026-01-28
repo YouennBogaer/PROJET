@@ -25,6 +25,7 @@ class MeteorScorer:
                  raise FileNotFoundError(f"Impossible de trouver 'meteor-1.5.jar'.")
 
 
+        # on alloue 2G de ram à meteor pour eviter les crashs.
         self.meteor_cmd = [
             java_path, '-Duser.language=en', '-Duser.country=US', 
             '-jar', '-Xmx2G', self.meteor_jar, 

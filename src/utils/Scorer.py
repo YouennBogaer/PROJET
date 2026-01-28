@@ -5,6 +5,7 @@ from pycocoevalcap.spice.spice import Spice
 
 from utils.ChairScorer import ChairScorer
 from utils.MeteorScorer import MeteorScorer
+from utils.SpiceScorer import SpiceScorer
 
 import os
 from dotenv import load_dotenv
@@ -134,7 +135,7 @@ class Scorer:
             return 0.0, []
     
         try:
-         spice_scorer = Spice()
+         spice_scorer = SpiceScorer()
         except Exception as e:
          print(f"Erreur à l'init de SPICE (Java manquant ?): {e}")
          return None
@@ -142,7 +143,7 @@ class Scorer:
         gts = self.sanitize_dict(gts)
         res = self.sanitize_dict(res)
 
-        avg_score, scores_detailed = spice_scorer.compute_score(gts, res)
+        avg_score, scores_detailed = spice_scorer.compute_score(gts, res, java_path=self.java_path)
         return avg_score, scores_detailed
         
     
