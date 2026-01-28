@@ -2,7 +2,8 @@ from pathlib import Path
 import ollama
 
 class Model:
-   def __init__(self, prompts, imgs_path, coco_captions):
+   def __init__(self, model_name, prompts, imgs_path, coco_captions):
+       self.model_name = model_name
        self.imgs_path = imgs_path
        self.prompts = prompts
        self.coco_captions = coco_captions
@@ -27,12 +28,16 @@ class Model:
 
          try:
             reponse = ollama.chat(
-                  model='llava',
+                  model=self.model_name,
                   messages=[{
                      'role': 'user',
                      'content': self.prompts[prompt_id],
                      'images': [img_path]
-                  }]
+                  }],
+                #options={
+                 #   'temperature': 0.1,  # Force le modèle à être moins "fou"
+                 #   'num_predict': 100  # Limite la longueur pour éviter les boucles infinies de symboles
+                #}
             )
             
             description = reponse['message']['content']

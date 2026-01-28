@@ -6,8 +6,13 @@ from pycocoevalcap.spice.spice import Spice
 from utils.ChairScorer import ChairScorer
 from utils.MeteorScorer import MeteorScorer
 
-JAVA_PATH = "C:/Users/bogae/Documents/java8/jdk8u472-b08/bin/java.exe"
+import os
+from dotenv import load_dotenv
+from pathlib import Path
+load_dotenv()
 
+JAVA_PATH = Path(os.getenv('JAVA_PATH'))
+print(JAVA_PATH)
 class Scorer:
     def __init__(self, path_instances, path_synonyms, java_path = JAVA_PATH):
         self.path_instances = path_instances
