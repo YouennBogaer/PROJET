@@ -14,7 +14,15 @@ class Model:
       """
 
       # Récupère les ids des images dans l'ordre de images_to_process
-      images_ids = [int(Path(path).stem) for path in self.imgs_path]
+      images_ids = []
+      for path in self.imgs_path:
+          stem = Path(path).stem
+          try:
+              # Convert to coco (code base Youenn)
+              images_ids.append(int(stem))
+          except ValueError:
+              # if not possible because not an int we don't convert (code Victor)
+              images_ids.append(stem)
 
       print(f"--- Starting analysis. Selected images : {len(images_ids)} ---")
 

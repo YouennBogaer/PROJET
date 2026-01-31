@@ -1,11 +1,10 @@
 import streamlit as st
 from PIL import Image
-from pathlib import Path
 from Model import Model
 import os
 import shutil
 from dotenv import load_dotenv
-from rag import pipeline_rag
+from rag import pipeline_model, pipeline_clip
 
 load_dotenv()
 
@@ -35,9 +34,8 @@ def save_uploaded_files(uploaded_files):
 
 
 # --- SIDEBAR ---
-st.sidebar.image("/home/vic/Desktop/s1/NLP/PROJET/src/utils/tiger.gif")
-st.sidebar.title("Settings")
 
+st.sidebar.title("Settings")
 try:
     default_index = available_models.index(default_model_env)
 except ValueError:
@@ -56,6 +54,21 @@ st.sidebar.markdown("---")
 if st.sidebar.button("Clear History"):
     st.session_state.messages = []
     st.rerun()
+
+tiger_path = "/home/vic/Desktop/s1/NLP/PROJET/src/utils/tiger.gif"
+
+st.sidebar.markdown("<br>" * 25, unsafe_allow_html=True)
+
+col1, col2, col3 = st.sidebar.columns([3, 2, 3])
+with col2:
+    if st.button(":tiger2:", help="Un qué ?"):
+        st.sidebar.image(tiger_path, use_container_width=True)
+        audio_file = open('/home/vic/Desktop/s1/NLP/PROJET/src/utils/dame-un-gr.mp3', 'rb')
+        audio_bytes = audio_file.read()
+        st.audio(audio_bytes, format='audio/mp3',autoplay=True)
+        st.balloons()
+
+
 
 # --- SESSION STATE ---
 if "messages" not in st.session_state:
@@ -124,20 +137,23 @@ else:
             for idx, img_file in enumerate(uploaded_files):
                 cols[idx % 5].image(img_file, caption=img_file.name, use_container_width=True)
 
-        if user_query := st.chat_input("Search for something (e.g., 'A person with a red hat')"):
+        if user_query := st.chat_input("Search for something"):
             with st.chat_message("user"):
                 st.markdown(user_query)
 
             with st.chat_message("assistant"):
                 with st.spinner("Processing RAG pipeline..."):
                     try:
-                        bot_response, best_img_path = pipeline_rag(user_query, image_paths, model=selected_model)
+                        best_img_path = pipeline_clip(user_query, image_paths)
 
-                        st.markdown(f"**Best match:** {os.path.basename(best_img_path)}")
-                        st.image(best_img_path, width=300)
-
-                        st.markdown("### Answer")
-                        st.markdown(bot_response)
+                        if best_img_path is None:
+                            st.error("Clip did not find a good match, please retry with another prompt")
+                        else:
+                            st.markdown(f"**Best match:** {os.path.basename(best_img_path)}")
+                            st.image(best_img_path, width=300)
+                            bot_response = pipeline_model(user_query, best_img_path, model=selected_model)
+                            st.markdown("### Answer")
+                            st.markdown(bot_response)
 
                     except Exception as e:
                         st.error(f"RAG Pipeline Error: {e}")
