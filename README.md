@@ -17,6 +17,8 @@
 
 Ce projet implémente une solution de compréhension d'image évolutive, passant d'un système de **Captioning** (génération de descriptions) à un outil interactif de **VQA** (Visual Question Answering) via Streamlit. L'innovation repose sur un moteur de **RAG Multimodal** capable de naviguer intelligemment dans une base de données visuelle.
 
+Trouvez une démonstration en vidéo : https://youtu.be/G_b3ViNHbyA
+
 ---
 
 ## 2. Architecture Technique & Fusion Multimodale
