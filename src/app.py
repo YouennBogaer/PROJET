@@ -1,14 +1,19 @@
 import streamlit as st
 from PIL import Image
-from Model import Model
+from core.Model import Model
 import os
 import shutil
 from dotenv import load_dotenv
-from rag import pipeline_model, pipeline_clip
-
+from core.rag import pipeline_model, pipeline_clip
+from pathlib import Path
 load_dotenv()
 
-# --- CONFIGURATION ---
+
+SRC_DIR = Path(__file__).parent.parent
+TIGER_PATH = SRC_DIR / "assets" / "tiger.gif"
+AUDIO_PATH = SRC_DIR / "assets" / "dame-un-gr.mp3"
+
+#CONFIGURATION
 st.set_page_config(page_title="Vision Chatbot", layout="wide")
 
 # Load model options from environment variables
@@ -33,7 +38,7 @@ def save_uploaded_files(uploaded_files):
     return saved_paths
 
 
-# --- SIDEBAR ---
+#SIDEBAR
 
 st.sidebar.title("Settings")
 try:
@@ -55,15 +60,14 @@ if st.sidebar.button("Clear History"):
     st.session_state.messages = []
     st.rerun()
 
-tiger_path = "/home/vic/Desktop/s1/NLP/PROJET/src/utils/tiger.gif"
 
 st.sidebar.markdown("<br>" * 25, unsafe_allow_html=True)
 
 col1, col2, col3 = st.sidebar.columns([3, 2, 3])
 with col2:
     if st.button(":tiger2:", help="Un qué ?"):
-        st.sidebar.image(tiger_path, use_container_width=True)
-        audio_file = open('/home/vic/Desktop/s1/NLP/PROJET/src/utils/dame-un-gr.mp3', 'rb')
+        st.sidebar.image(TIGER_PATH, use_container_width=True)
+        audio_file = open(AUDIO_PATH, 'rb')
         audio_bytes = audio_file.read()
         st.audio(audio_bytes, format='audio/mp3',autoplay=True)
         st.balloons()
@@ -121,14 +125,14 @@ if mode == "Single Image Analysis":
                         except Exception as e:
                             st.error(f"Error: {e}")
 
-# --- MODE 2: MULTIMODAL RAG ---
+#MODE 2: MULTIMODAL RAG
 else:
     st.title("Multimodal RAG")
     st.markdown(f"Search using CLIP and analyze with {selected_model}")
 
     uploaded_files = st.file_uploader("Upload photo album", accept_multiple_files=True, type=["jpg", "jpeg", "png"])
 
-    if uploaded_files:
+    if len(uploaded_files) > 1:
         image_paths = save_uploaded_files(uploaded_files)
         st.success(f"{len(image_paths)} images loaded.")
 
@@ -158,4 +162,4 @@ else:
                     except Exception as e:
                         st.error(f"RAG Pipeline Error: {e}")
     else:
-        st.info("Please upload images to enable RAG mode.")
+        st.info("Please upload at least 2 images to enable RAG mode.")
