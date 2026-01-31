@@ -6,7 +6,7 @@ from pycocoevalcap.spice.spice import Spice
 <<<<<<< HEAD
 from utils.ChairScorer import ChairScorer
 from utils.MeteorScorer import MeteorScorer
-from utils.SpiceScorer import SpiceScorer
+from evaluation.SpiceScorer import SpiceScorer
 =======
 from evaluation.ChairScorer import ChairScorer
 from evaluation.MeteorScorer import MeteorScorer
