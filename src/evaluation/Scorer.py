@@ -184,11 +184,3 @@ class Scorer:
 
         return eval_result
     
-    def close(self):
-        """Nettoyage propre à la fin"""
-        if self.meteor:
-            self.meteor.close()
-            
-    def __del__(self):
-        self.close()
-

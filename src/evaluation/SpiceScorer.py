@@ -29,12 +29,8 @@ class SpiceScorer(Spice):
 
             iterator = iter(cmd[1:])
             for arg in iterator:
-                if arg == '-Xmx8G':
-                    # réduction de la RAM
-                    new_cmd.append('-Xmx4G')
-                
                 # debug
-                elif arg == '-silent':
+                if arg == '-silent':
                     continue 
                 
                 elif arg == '-cache':

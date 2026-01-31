@@ -6,9 +6,6 @@ Requests==2.32.5
 streamlit==1.53.1
 tqdm==4.67.1
 ipykernel
-<<<<<<< HEAD
 matplotlib
-=======
 torch
 transformers
->>>>>>> a2bd8876a455073b73c02e8be04b2b206e8712c1

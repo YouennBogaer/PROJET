@@ -1,113 +1,145 @@
-# Projet NLP pour 19/12/2025
-## Sujet : Multimodal
 
-# Tâche : Image Captioning
-# Choix du llm : LLaVA (via ollama)
-# Choix de baseline : 
+# Projet NLP Multimodal : Description d'Images & VQA Local
 
-# Image Captioning & RAG Pipeline
+**Ewen DANO, Victor ANDRE, Youenn BOGAER**
 
-🚀 **Description** : Système de génération de légendes d'images optimisé par RAG (Retrieval Augmented Generation) pour améliorer la pertinence contextuelle et limiter les hallucinations visuelles.
+**Date de rendu :** 31/01/2025
 
----
+**Sujet :** NLP Multimodal (Sujet 03)
 
-## 📂 Structure du Projet
+**Tâche :** Image Captioning & Visual Question Answering (VQA)
 
-.
-├── app.py                      # Application principale (Streamlit)
-├── main.ipynb                  # Expérimentations et développement
-├── main_compare.ipynb          # Benchmarks et comparaisons de modèles
-├── core/                       # Logique métier
-│   ├── Model.py                # Architecture et inférence du modèle
-│   └── rag.py                  # Moteur de recherche et contexte RAG
-├── data/                       # Données et ressources
-│   ├── our_data/               # Index (captions_map) et synonymes SOTA
-│   └── test/                   # Images de test (dog, food, etc.)
-├── evaluation/                 # Métriques de performance
-│   ├── ChairScorer.py          # Analyse des hallucinations (CHAIR)
-│   ├── MeteorScorer.py         # Score METEOR
-│   └── Scorer.py               # Orchestrateur d'évaluation
-├── utils/                      # Scripts utilitaires
-│   ├── dictCaptions.py         # Helpers pour dictionnaires de légendes
-│   └── dl.py                   # Téléchargement de modèles/assets
-└── temp_rag_images/            # Traitements temporaires pour le RAG
+**Technique avancée :** RAG Multimodal & Fusion Multimodale (Late Fusion)
 
 ---
 
-## ⚙️ Installation & Configuration
+## 1. Présentation du Projet
 
-### 1. Environnement (Conda)
+Ce projet implémente une solution de compréhension d'image évolutive, passant d'un système de **Captioning** (génération de descriptions) à un outil interactif de **VQA** (Visual Question Answering) via Streamlit. L'innovation repose sur un moteur de **RAG Multimodal** capable de naviguer intelligemment dans une base de données visuelle.
+
+---
+
+## 2. Architecture Technique & Fusion Multimodale
+
+Le projet repose sur une **fusion multimodale de type "Late Fusion"**, combinant la recherche vectorielle et le raisonnement génératif.
+
+### 2.1 RAG 
+
+Pour l'extension RAG, nous utilisons **CLIP** pour projeter texte et images dans un espace vectoriel commun. Le processus de sélection est optimisé comme suit :
+
+1. **Calcul de Similarité** : Nous calculons la probabilité de correspondance entre la requête textuelle et chaque image de la base.
+2. **Filtrage de Confiance** : Nous sélectionnons l'image ayant la **probabilité maximale**.
+3. **Gestion de l'Incertitude** : Si le score de probabilité est **trop bas (en dessous d'un seuil défini)**, le système considère qu'aucune image n'est pertinente. Cela évite au LLM de générer une réponse basée sur un contexte visuel erroné (limitation des hallucinations "hors contexte").
+
+### 2.2 Stratégie d'Analyse (Prompt Engineering & Modèles)
+
+Nous n'avons pas testé une solution unique, mais une matrice de combinaisons pour trouver la meilleure performance :
+
+* **Comparaison de Modèles** : Benchmarks entre `Llava`, `Moondream` et `Qwen2.5-VL` (via Ollama).
+* **Prompt Engineering** : Test de **différents prompts** (plus ou moins descriptifs, avec ou sans pré-prompts de contexte) pour observer l'impact sur la précision des réponses et le taux d'hallucination.
+
+---
+
+## 3. Démarche : De la Description au VQA
+
+* **Baseline (Tronc commun)** : Génération de légendes simples (Captioning) sur une image isolée fournie par l'utilisateur, nous avons commencé avec llava puis tester des modèles plus légers (monndream...) pour comparer..
+* **Extension Avancée** : Transformation de l'outil en système de VQA dynamique. Grâce au RAG, l'utilisateur pose une question et le système retrouve l'image source avant de répondre.
+
+---
+
+## 4. Évaluation & Benchmarking (Notebooks Jupyter)
+
+L'évaluation est effectuée dans `main.ipynb` et `main_compare.ipynb` pour comparer les modèles et les prompts :
+
+* **Scores NLP** : CIDEr, BLEU, METEOR, SPICE, CHAIR.
+* **Fidélité visuelle** : Score **CHAIR** pour détecter les objets inventés.
+* **Performance** : Temps d'inférence (Latence).
+
+---
+
+## 5. Installation et Configuration
+
+### 5.1 Environnement (Conda)
+
+```bash
 conda create -n nlp_proj python=3.13
 conda activate nlp_proj
 pip install -r requirements.txt
 
-### 2. Installation et Téléchargement
-Utilisez le fichier requirements.txt pour installer toutes les bibliothèques nécessaires :
-pip install -r requirements.txt
+```
 
-
-## 🛠️ Configuration du Système & Dépendances
-
-### 1. Installation d'Ollama et des Modèles
-Ollama est requis pour faire tourner les modèles de vision localement. Installez-le puis récupérez les modèles nécessaires :
+### 5.2 Ollama et Modèles
 
 ```bash
-# Installation d'Ollama (Linux)
-curl -fsSL [https://ollama.com/install.sh](https://ollama.com/install.sh) | sh
-
-# Téléchargement des modèles de vision
+curl -fsSL https://ollama.com/install.sh | sh
 ollama pull llava
 ollama pull moondream
 ollama pull qwen2.5-vl:3b
+
 ```
 
-# Installation de SDKMAN
+### 5.3 Configuration Java (Metrics)
+
+Requis pour le score METEOR via SDKMAN :
+
 ```bash
-curl -s "[https://get.sdkman.io](https://get.sdkman.io)" | bash
+curl -s "https://get.sdkman.io" | bash
 source "$HOME/.sdkman/bin/sdkman-init.sh"
-```
-# Installation de Java 8
-```bash
 sdk install java 8.0.402-amzn
+
 ```
 
-# --- CONFIGURATION LOCALE ---
-
-# Chemin absolu vers votre dataset COCO
-DATASET_PATH="/mnt/2210B8B210B88E73/Desktop/IA_Image/coco2017/"
-
-# Modèles disponibles via Ollama
-AVAILABLE_MODELS="llava,moondream,qwen2.5-vl:3b"
-DEFAULT_MODEL="llava"
-
-# Chemin vers votre exécutable Java 8 (Exemple avec SDKMAN)
-JAVA_PATH="/home/vic/.sdkman/candidates/java/current/bin/java"
 ---
 
-## 🚀 Utilisation
+## 6. Structure du Projet
 
-### Lancer l'interface utilisateur
-streamlit run app.py
+```text
+.
+├── app.py                      # Point d'entrée Streamlit (Interface VQA)
+├── main.ipynb                  # Expérimentations prompts + graphiques metrics
+├── main_compare.ipynb          # Benchmark multi-modèles + graphiques metrics
+├── .env                        # Configuration (DATASET_PATH, MODELS, JAVA_PATH)
+├── requirements.txt            # Dépendances Python
+├── core/
+│   ├── Model.py                # Classe Model : Orchestre Ollama + mapping IDs COCO
+│   └── rag.py                  # Pipeline CLIP complète (Init, DL, Seuil, Inférence)
+├── evaluation/
+│   ├── Scorer.py               # Orchestrateur (lance les calculs de scores)
+│   ├── ChairScorer.py          # Logique spécifique aux hallucinations
+│   └── MeteorScorer.py         # Liaison Python -> Java 8 pour METEOR
+├── data/
+│   ├── our_data/               # Captions_map (via dict_captions) & synonymes
+│   └── test/                   # Échantillon d'images (dog.jpg, food.jpg, etc.)
+├── utils/
+│   ├── dict_captions.py        # Génération du dictionnaire de légendes
+│   └── dl.py                   # Helpers pour téléchargements additionnels
+└── temp_rag_images/            # Cache/Stockage temporaire pour le flux RAG
 
-### Exécuter les analyses
-Ouvrez main.ipynb pour tester le pipeline complet ou main_compare.ipynb pour visualiser les différences de performances entre les configurations.
+```
 
----
 
-## 📊 Évaluation
-Le projet intègre des métriques spécifiques au NLP et à la Vision :
-* CHAIR : Mesure le taux d'objets hallucinés non présents dans l'image.
-* METEOR : Évalue la qualité grammaticale et sémantique.
 
----
+### Model.py
 
-## 🛠️ Stack Technique
-* Langage : Python 3.13
-* Interface : Streamlit
-* Analyse : Notebooks Jupyter
-* Ressources : COCO Synonyms, Captions Map
+Ce fichier gère l'inférence avec Ollama. Il récupère les images et adapte le traitement des IDs : si le nom du fichier est un nombre, il le convertit en format COCO (entier), sinon il garde le nom d'origine (chaîne de caractères). La fonction `execute` renvoie deux dictionnaires : les descriptions générées par le modèle et les légendes réelles (Ground Truth) extraites du dataset.
 
----
+### rag.py
 
-## ✍️ Auteur
-* Vic
+Ce module contient toute la logique de recherche vectorielle. Il gère l'initialisation de CLIP, le téléchargement automatique du modèle et le calcul des probabilités. Pour la sélection, il identifie l'image avec la probabilité maximale, mais intègre un seuil de filtrage : si ce score est trop faible, aucune image n'est renvoyée pour éviter les erreurs de contexte. Le fichier est autonome et peut être utilisé sans l'interface Streamlit.
+
+### Dossier Evaluation
+
+Il regroupe les scripts de calcul des métriques (BLEU, METEOR, CIDEr, SPICE) et le score CHAIR pour quantifier les hallucinations. Le fichier `MeteorScorer.py` assure la liaison avec Java 8 (via le chemin défini dans le `.env`) pour exécuter les calculs de similarité sémantique.
+
+### Notebooks de comparaison
+
+* **main.ipynb** : Analyse l'impact des différents prompts sur les résultats. Il génère des graphiques pour visualiser l'évolution des scores selon la formulation des consignes.
+* **main_compare.ipynb** : Compare les trois modèles (Llava, Moondream, Qwen2.5-VL) sur un même set d'images pour mesurer les différences de précision et de temps d'exécution.
+
+### .env
+
+Il centralise les paramètres locaux : le chemin absolu vers le dataset COCO, la liste des modèles Ollama disponibles, le modèle par défaut et le chemin vers l'exécutable Java 8 nécessaire aux métriques.
+
+## 7. Analyse 
+
+Voir les notebooks pour les analyses de resultats.
