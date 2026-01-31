@@ -1,8 +1,6 @@
-import gc
-
 from dotenv import load_dotenv
 import torch
-
+from pathlib import Path
 import re
 
 load_dotenv()
@@ -10,7 +8,7 @@ from transformers import CLIPModel, CLIPProcessor
 from PIL import Image
 import time
 import os
-from Model import Model
+from core.Model import Model
 import gc
 
 # load
@@ -124,9 +122,8 @@ def pipeline_model(questions, image, model=os.getenv("DEFAULT_MODEL")):
     :param model:
     :return:
     """
-    print(f" DEBUG -- image début pipeline{image}")
+
     def run_inf(p):
-        print(f" DEBUG -- image début run inférence{image}")
         chat_model = Model(
             model_name=model,
             prompts=[questions],
@@ -134,7 +131,6 @@ def pipeline_model(questions, image, model=os.getenv("DEFAULT_MODEL")):
             coco_captions={}
         )
         res, _ = chat_model.execute(prompt_id=0, freq_print=0)
-        print(f"DEBUG -- res {res}")
         return res[list(res.keys())[0]][0]
 
     # La on fait un try si l'image passe pas on redimenssionne puis on retente (c'est à cause de certains formats
@@ -158,7 +154,6 @@ def pipeline_model(questions, image, model=os.getenv("DEFAULT_MODEL")):
         except Exception as e2:
             print(f"Err 2: {e2}")
             return "Ann error occured on the image size or type", best_img
-    gc.collect()
     print(f"response : {bot_response}")
     return bot_response
 
@@ -179,23 +174,31 @@ def preprocess_prompt(prompt):
 
 
 if __name__ == "__main__":
-    # start = time.time()
-    abs_path = "/home/vic/Desktop/s1/NLP/PROJET/src/utils/tmp/"
-    test = [abs_path + "bathroom.png", abs_path + "garage.png", abs_path + "food.png", abs_path + "dog.png",
-            abs_path + "dogs.png", "/home/vic/Desktop/s1/NLP/PROJET/src/utils/tmp/faussefacture.jpg"]
-    # pipeline_rag("facture free", test)
-    # end = time.time()
-    # temps = end - start
-    # print(f"Temps : {temps:.2f}")
+    if __name__ == "__main__":
+        ROOT = Path(__file__).resolve().parent.parent
+        test_dir = ROOT / "data" / "test"
 
-    prompt = "Ouais c'est greg"
-    print(f"base prompt{prompt}")
-    x = pipeline_clip(prompt, test)
+        image_names = ["bathroom.png", "garage.png", "food.png", "dog.png", "dogs.png"]
+        image_paths = [str(test_dir / img) for img in image_names if (test_dir / img).exists()]
 
-    y = pipeline_model(prompt,x,model="moondream")
-    try :
-        print (f"response {y}")
-    except Exception as e:
-        print(f"Err 1: {e}")
-        print(f"type réponse {type(y)}")
+        if not image_paths:
+            print(f"Erreur : Aucun fichier trouvé dans {test_dir}")
+        else:
+            user_query = "Une facture de téléphone"
+            target_model = "moondream"
 
+            start_time = time.time()
+
+            selected_image = pipeline_clip(user_query, image_paths)
+
+            if selected_image:
+                response = pipeline_model(user_query, selected_image, model=target_model)
+
+                print(f"\nPrompt: {user_query}")
+                print(f"Image: {Path(selected_image).name}")
+                print("-" * 10)
+                print(f"Réponse: {response}")
+            else:
+                print("Aucune image correspondante trouvée.")
+
+            print(f"\nDurée: {time.time() - start_time:.2f}s")

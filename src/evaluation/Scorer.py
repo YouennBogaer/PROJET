@@ -3,9 +3,14 @@ from pycocoevalcap.bleu.bleu import Bleu
 from pycocoevalcap.cider.cider import Cider
 from pycocoevalcap.spice.spice import Spice
 
+<<<<<<< HEAD
 from utils.ChairScorer import ChairScorer
 from utils.MeteorScorer import MeteorScorer
 from utils.SpiceScorer import SpiceScorer
+=======
+from evaluation.ChairScorer import ChairScorer
+from evaluation.MeteorScorer import MeteorScorer
+>>>>>>> a2bd8876a455073b73c02e8be04b2b206e8712c1
 
 import os
 from dotenv import load_dotenv
