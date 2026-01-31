@@ -119,7 +119,14 @@ sdk install java 8.0.402-amzn
 
 ```
 
+### Interface VQA streamlit
 
+Lancez app.py puis streamlit run pour accéder à l'interface. Trouvez une démonstration en vidéo à ce lien : https://youtu.be/G_b3ViNHbyA
+
+```
+python .\src\app.py
+streamlit run .\src\app.py
+```
 
 ### Model.py
 
