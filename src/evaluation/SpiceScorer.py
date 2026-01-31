@@ -1,5 +1,4 @@
 import subprocess
-import os
 import platform
 from pycocoevalcap.spice.spice import Spice
 
