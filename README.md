@@ -142,4 +142,4 @@ Il centralise les paramètres locaux : le chemin absolu vers le dataset COCO, la
 
 ## 7. Analyse 
 
-Voir les notebooks pour les analyses de resultats.
+Voir les notebooks pour les analyses de resultats. src/main.ipnb et src/main_compare.ipynb
