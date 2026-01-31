@@ -5,6 +5,7 @@ from pycocoevalcap.spice.spice import Spice
 
 from evaluation.ChairScorer import ChairScorer
 from evaluation.MeteorScorer import MeteorScorer
+from evaluation.SpiceScorer import SpiceScorer
 
 import os
 from dotenv import load_dotenv
